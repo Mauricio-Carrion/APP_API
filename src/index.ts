@@ -1,14 +1,12 @@
-const express = require('express');
-const cors = require('cors');
+import express, { Express, Request, Response } from 'express';
+import cors from 'cors';
+import figlet from 'figlet';
+import chalk from 'chalk';
+import clear from 'clear';
+import inquirer from 'inquirer';
+import { databaseType } from './config/config'
+
 const server = express();
-const figlet = require('figlet');
-const { databaseType } = require('./config/config')
-const chalk = require('chalk');
-
-import { Request, Response } from 'express';
-const clear = require('clear');
-const inquirer = require('inquirer');
-
 
 if (!databaseType) {
   clear()
