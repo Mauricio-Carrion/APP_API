@@ -5,25 +5,52 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
+const figlet_1 = __importDefault(require("figlet"));
+const chalk_1 = __importDefault(require("chalk"));
 const clear_1 = __importDefault(require("clear"));
 const inquirer_1 = __importDefault(require("inquirer"));
 const config_1 = require("./config/config");
+const fs_1 = __importDefault(require("fs"));
 const server = (0, express_1.default)();
 if (!config_1.databaseType) {
+    const handleDbName = (dbHash) => {
+        if (dbHash.includes('Firebird'))
+            return 'Firebird';
+        if (dbHash.includes('MySQL'))
+            return 'MySQL';
+    };
     (0, clear_1.default)();
+    console.log(chalk_1.default.bgBlueBright.white(figlet_1.default.textSync('JF App Server', { horizontalLayout: 'full' })));
     inquirer_1.default
         .prompt([
         {
-            name: 'faveReptile',
-            message: 'What is your favorite reptile?',
-            default: 'Alligators'
-        },
+            type: 'list',
+            name: 'databaseType',
+            message: 'Qual o banco de dados?',
+            choices: [chalk_1.default.bgRed.black.bold('Firebird'), chalk_1.default.bgCyan.hex('#F29111').bold('MySQL')],
+        }
     ])
-        .then((answers) => {
-        console.info('Answer:', answers.faveReptile);
+        .then(answers => {
+        const str = handleDbName(answers.databaseType);
+        const filename = "src/config/config.txt";
+        fs_1.default.open(filename, "a", (err, fd) => {
+            if (err) {
+                console.log(err.message);
+            }
+            else {
+                fs_1.default.write(fd, str, (err, bytes) => {
+                    if (err) {
+                        console.log(err.message);
+                    }
+                    else {
+                        console.log(bytes + ' bytes written');
+                    }
+                });
+            }
+        });
     });
 }
-else {
+if (config_1.databaseType) {
     server.use((0, cors_1.default)());
     server.use(express_1.default.json());
     server.use(express_1.default.urlencoded({ extended: true }));
