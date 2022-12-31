@@ -16,19 +16,7 @@ export const host = '127.0.0.1'
 export const mySqlPort = 3306
 export const firebirdPort = 3050
 
-if (fs.existsSync('../config/config.json')) {
 
-  configJson = '../config/config.json'
-  configObj = JSON.parse(configJson)
-  databaseType = configObj.database
-  databaseName = configObj.databaseName ? configObj.databaseName : ''
-  firebirdPath = configObj.firebirdPath ? configObj.firebirdPath : firebirdDefaultPath
-
-} else {
-
-  console.log('Arquivo de configuração não encontrado!')
-
-}
 
 
 

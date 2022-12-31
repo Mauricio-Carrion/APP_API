@@ -3,32 +3,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const cors_1 = __importDefault(require("cors"));
+const child_process_1 = require("child_process");
 const figlet_1 = __importDefault(require("figlet"));
 const chalk_1 = __importDefault(require("chalk"));
 const clear_1 = __importDefault(require("clear"));
 const inquirer_1 = __importDefault(require("inquirer"));
-const config_1 = require("./config/config");
 const ora_1 = __importDefault(require("ora"));
 const fs_1 = __importDefault(require("fs"));
-const server = (0, express_1.default)();
+const configFile = './build/config/config.json';
 const runServer = () => {
     const spinner = (0, ora_1.default)('Iniciando servidor...').start();
     setTimeout(() => {
         spinner.succeed();
-        server.use((0, cors_1.default)());
-        server.use(express_1.default.json());
-        server.use(express_1.default.urlencoded({ extended: true }));
-        server.get('/', (req, res) => {
-            res.status(200).json({ msg: 'Bem vindo' });
-        });
-        server.listen(3092, () => {
-            console.log(`Servidor rodando no endereco:http://localhost:${'process.env.PORT'}`);
-        });
+        (0, child_process_1.exec)('pm2 start C://DEV//APP_API//build//server.js');
+        console.log(`Servidor rodando no endereco:http://localhost:${'process.env.PORT'}`);
     }, 2000);
 };
-if (!config_1.databaseType) {
+if (fs_1.default.existsSync(configFile)) {
+    runServer();
+}
+else {
     const handleDbName = (dbHash) => {
         if (dbHash.includes('Firebird'))
             return 'Firebird';
@@ -69,7 +63,7 @@ if (!config_1.databaseType) {
                     str.databaseName = answers.databaseName
                 :
                     str.databasePath = answers.databasePath;
-            const filename = "src/config/config.json";
+            const filename = "./build/config/config.json";
             fs_1.default.open(filename, "a", (err, fd) => {
                 if (err) {
                     console.log(err.message);
@@ -87,7 +81,4 @@ if (!config_1.databaseType) {
             });
         });
     });
-}
-else {
-    runServer();
 }

@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "ScanJF": "node build/index.js",
     "build": "npx tsc",
-    "start": "node build/index.js",
     "dev": "npx tsc && node build/index.js"
   },
   "keywords": [

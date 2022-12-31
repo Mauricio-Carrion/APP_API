@@ -1,37 +1,35 @@
-import express, { Request, Response } from 'express';
-import cors from 'cors';
+import { exec } from 'child_process';
 import figlet from 'figlet';
 import chalk from 'chalk';
 import clear from 'clear';
 import inquirer from 'inquirer';
-import { databaseType } from './config/config';
 import ora from 'ora'
 import fs from 'fs';
 
-const server = express();
+const configFile = './build/config/config.json'
 
 const runServer = () => {
   const spinner = ora('Iniciando servidor...').start();
 
+  clear()
+
   setTimeout(() => {
     spinner.succeed()
 
-    server.use(cors());
-    server.use(express.json());
-    server.use(express.urlencoded({ extended: true }));
+    exec('pm2 start C://DEV//APP_API//build//server.js')
 
-    server.get('/', (req: Request, res: Response) => {
-      res.status(200).json({ msg: 'Bem vindo' })
-    });
+    console.log(`Servidor rodando no endereco:http://localhost:${'process.env.PORT'}`);
 
-    server.listen(3092, () => {
-      console.log(`Servidor rodando no endereco:http://localhost:${'process.env.PORT'}`);
-    });
   }, 2000);
 
 }
 
-if (!databaseType) {
+if (fs.existsSync(configFile)) {
+
+  runServer()
+
+} else {
+
   const handleDbName = (dbHash: string) => {
     if (dbHash.includes('Firebird'))
       return 'Firebird'
@@ -93,7 +91,7 @@ if (!databaseType) {
             :
             str.databasePath = answers.databasePath
 
-          const filename = "src/config/config.json";
+          const filename = "./build/config/config.json";
 
           fs.open(filename, "a", (err, fd) => {
             if (err) {
@@ -111,10 +109,6 @@ if (!databaseType) {
         })
 
     })
-
-} else {
-
-  runServer()
 
 }
 
