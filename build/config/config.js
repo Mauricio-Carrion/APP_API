@@ -1,12 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.firebirdPort = exports.mySqlPort = exports.host = exports.firebirdPath = exports.databaseName = exports.databaseType = void 0;
-let configJson;
-let configObj;
+class Config {
+    constructor() {
+        this.configJson = '';
+        this.database = '';
+        this.databaseName = '';
+        this.firebirdPath = '';
+        this.firebirdDefaultPath = 'C://JF System//Estoque//Dados//JFC.FDB';
+        this.host = '127.0.0.1';
+        this.mySqlPort = 3306;
+        this.firebirdPort = 3050;
+    }
+}
+exports.default = Config;
 let firebirdDefaultPath = 'C://JF System//Estoque//Dados//JFC.FDB';
-exports.databaseType = '';
-exports.databaseName = '';
-exports.firebirdPath = '';
-exports.host = '127.0.0.1';
-exports.mySqlPort = 3306;
-exports.firebirdPort = 3050;
+const host = '127.0.0.1';
+const mySqlPort = 3306;
+const firebirdPort = 3050;

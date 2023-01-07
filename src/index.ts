@@ -6,7 +6,7 @@ import inquirer from 'inquirer';
 import ora from 'ora'
 import fs from 'fs';
 
-const configFile = './build/config/config.json'
+const configFile = `${__dirname}/config/config.json`
 
 const runServer = () => {
   const spinner = ora('Iniciando servidor...').start();
@@ -18,7 +18,7 @@ const runServer = () => {
 
     exec('pm2 start C://DEV//APP_API//build//server.js')
 
-    console.log(`Servidor rodando no endereco:http://localhost:${'process.env.PORT'}`);
+    console.log(`Servidor rodando no endereco:http://localhost:3092`);
 
   }, 2000);
 
@@ -91,7 +91,7 @@ if (fs.existsSync(configFile)) {
             :
             str.databasePath = answers.databasePath
 
-          const filename = "./build/config/config.json";
+          const filename = `${__dirname}/config/config.json`;
 
           fs.open(filename, "a", (err, fd) => {
             if (err) {

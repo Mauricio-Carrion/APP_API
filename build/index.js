@@ -10,13 +10,14 @@ const clear_1 = __importDefault(require("clear"));
 const inquirer_1 = __importDefault(require("inquirer"));
 const ora_1 = __importDefault(require("ora"));
 const fs_1 = __importDefault(require("fs"));
-const configFile = './build/config/config.json';
+const configFile = `${__dirname}/config/config.json`;
 const runServer = () => {
     const spinner = (0, ora_1.default)('Iniciando servidor...').start();
+    (0, clear_1.default)();
     setTimeout(() => {
         spinner.succeed();
         (0, child_process_1.exec)('pm2 start C://DEV//APP_API//build//server.js');
-        console.log(`Servidor rodando no endereco:http://localhost:${'process.env.PORT'}`);
+        console.log(`Servidor rodando no endereco:http://localhost:3092`);
     }, 2000);
 };
 if (fs_1.default.existsSync(configFile)) {
@@ -63,7 +64,7 @@ else {
                     str.databaseName = answers.databaseName
                 :
                     str.databasePath = answers.databasePath;
-            const filename = "./build/config/config.json";
+            const filename = `${__dirname}/config/config.json`;
             fs_1.default.open(filename, "a", (err, fd) => {
                 if (err) {
                     console.log(err.message);

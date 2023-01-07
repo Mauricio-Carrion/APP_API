@@ -1,21 +1,37 @@
-import fs from "fs";
-
-let configJson: string
-let configObj: ConfigObj
-let firebirdDefaultPath = 'C://JF System//Estoque//Dados//JFC.FDB'
-interface ConfigObj {
-  database: string,
-  databaseName: string,
+export default class Config {
+  configJson: any
+  database: string
+  databaseName: string
   firebirdPath: string
+  firebirdDefaultPath: string
+  host: string
+  mySqlPort: number
+  firebirdPort: number
+  configFile: string
+
+  static converteJson: any
+
+  constructor() {
+    this.configJson = null
+    this.configFile = `${__dirname}/config.json`
+    this.database = this.configJson.database
+    this.databaseName = this.configJson.databaseName
+    this.firebirdPath = this.configJson.firebirdPath
+    this.firebirdDefaultPath = 'C://JF System//Estoque//Dados//JFC.FDB'
+    this.host = '127.0.0.1'
+    this.mySqlPort = 3306
+    this.firebirdPort = 3050
+    this.converteConfigJson()
+  }
+
+  converteConfigJson(): void {
+    let configObj = JSON.parse(this.configFile)
+    this.configJson = configObj
+  }
+
+  get
 }
-
-export let databaseType = ''
-export let databaseName = ''
-export let firebirdPath = ''
-export const host = '127.0.0.1'
-export const mySqlPort = 3306
-export const firebirdPort = 3050
-
+    
 
 
 
