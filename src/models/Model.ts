@@ -9,18 +9,18 @@ export default class Model {
   firebirdPoll: any
 
   constructor() {
-    this.connectDb()
     this.mySqlPoll
     this.firebirdPoll
+    this.connectDb()
   }
 
   private connectDb() {
     if (config.db === "MySQL") {
       this.mySqlPoll = mysql.createPool({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME
+        host: config.dbhost,
+        user: 'jf.mysql',
+        password: '#@jj2802',
+        database: config.dbName
       });
     }
 
@@ -35,11 +35,34 @@ export default class Model {
     }
   }
 
-  getProdutoFirebirdQuery() {
+  getProdutoMysqlQuery(codigo: number) {
+    return new Promise((resolve, reject) => {
+      this.mySqlPoll.query('SELECT 1 + 1 AS solution', (error: any, results: any) => {
+        if (error) { reject(error); throw error };
 
+        if (results) {
+          resolve(results)
+        }
+      })
+    })
   }
 
-  getProdutoMysqlQuery() {
+  getProdutoFirebirdQuery(codigo: number) {
+    return new Promise((resolve, reject) => {
+      this.firebirdPoll.get((err: any, db: any) => {
+        if (err) { reject(err); throw err };
 
+        db.query('SELECT * FROM TABLE', (err: any, result: any) => {
+          if (err) throw err;
+
+          if (result) {
+            resolve(result)
+          }
+
+          db.detach();
+        });
+      });
+    })
   }
+
 }
