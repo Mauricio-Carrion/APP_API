@@ -6,9 +6,10 @@ import inquirer from 'inquirer';
 import ora from 'ora'
 import fs from 'fs';
 
-const configFile = `${__dirname}/config/config.json`
+import configData from './config/config.json'
 
 const runServer = () => {
+
   const spinner = ora('Iniciando servidor...').start();
 
   clear()
@@ -16,7 +17,7 @@ const runServer = () => {
   setTimeout(() => {
     spinner.succeed()
 
-    exec('pm2 start C://DEV//APP_API//build//server.js')
+    exec(`pm2 start ${__dirname}/server.js`)
 
     console.log(`Servidor rodando no endereco:http://localhost:3092`);
 
@@ -24,7 +25,7 @@ const runServer = () => {
 
 }
 
-if (fs.existsSync(configFile)) {
+if (configData.database) {
 
   runServer()
 
@@ -93,19 +94,27 @@ if (fs.existsSync(configFile)) {
 
           const filename = `${__dirname}/config/config.json`;
 
-          fs.open(filename, "a", (err, fd) => {
+          fs.writeFile(filename, JSON.stringify(str), (err) => {
             if (err) {
               console.log(err.message);
             } else {
-              fs.write(fd, JSON.stringify(str), (err, bytes) => {
-                if (err) {
-                  console.log(err.message);
-                } else {
-                  runServer()
-                }
-              })
+              runServer()
             }
           })
+
+          // fs.open(filename, "a", (err, fd) => {
+          //   if (err) {
+          //     console.log(err.message);
+          //   } else {
+          //     fs.write(fd, JSON.stringify(str), (err, bytes) => {
+          //       if (err) {
+          //         console.log(err.message);
+          //       } else {
+          //         runServer()
+          //       }
+          //     })
+          //   }
+          // })
         })
 
     })

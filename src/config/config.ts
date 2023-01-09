@@ -1,3 +1,4 @@
+import configData from './config.json'
 export default class Config {
   private configJson: any
   private database: string
@@ -7,24 +8,16 @@ export default class Config {
   private host: string
   private mySqlPort: number
   private firebirdPort: number
-  private configFile: string
 
   constructor() {
-    this.configJson = null
+    this.configJson = configData
     this.firebirdDefaultPath = 'C://JF System//Estoque//Dados//JFC.FDB'
-    this.configFile = `${__dirname}/config.json`
     this.database = this.configJson.database
     this.databaseName = this.configJson.databaseName
     this.firebirdPath = this.configJson.firebirdPath ? this.configJson.firebirdPath : this.firebirdDefaultPath
     this.host = '127.0.0.1'
     this.mySqlPort = 3306
     this.firebirdPort = 3050
-    this.converteConfigJson()
-  }
-
-  private converteConfigJson(): void {
-    let configObj = JSON.parse(this.configFile)
-    this.configJson = configObj
   }
 
   get db() {

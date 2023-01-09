@@ -10,17 +10,17 @@ const clear_1 = __importDefault(require("clear"));
 const inquirer_1 = __importDefault(require("inquirer"));
 const ora_1 = __importDefault(require("ora"));
 const fs_1 = __importDefault(require("fs"));
-const configFile = `${__dirname}/config/config.json`;
+const config_json_1 = __importDefault(require("./config/config.json"));
 const runServer = () => {
     const spinner = (0, ora_1.default)('Iniciando servidor...').start();
     (0, clear_1.default)();
     setTimeout(() => {
         spinner.succeed();
-        (0, child_process_1.exec)('pm2 start C://DEV//APP_API//build//server.js');
+        (0, child_process_1.exec)(`pm2 start ${__dirname}/server.js`);
         console.log(`Servidor rodando no endereco:http://localhost:3092`);
     }, 2000);
 };
-if (fs_1.default.existsSync(configFile)) {
+if (config_json_1.default.database) {
     runServer();
 }
 else {
@@ -65,21 +65,27 @@ else {
                 :
                     str.databasePath = answers.databasePath;
             const filename = `${__dirname}/config/config.json`;
-            fs_1.default.open(filename, "a", (err, fd) => {
+            fs_1.default.writeFile(filename, JSON.stringify(str), (err) => {
                 if (err) {
                     console.log(err.message);
                 }
                 else {
-                    fs_1.default.write(fd, JSON.stringify(str), (err, bytes) => {
-                        if (err) {
-                            console.log(err.message);
-                        }
-                        else {
-                            runServer();
-                        }
-                    });
+                    runServer();
                 }
             });
+            // fs.open(filename, "a", (err, fd) => {
+            //   if (err) {
+            //     console.log(err.message);
+            //   } else {
+            //     fs.write(fd, JSON.stringify(str), (err, bytes) => {
+            //       if (err) {
+            //         console.log(err.message);
+            //       } else {
+            //         runServer()
+            //       }
+            //     })
+            //   }
+            // })
         });
     });
 }
