@@ -6,7 +6,7 @@ const controller = new Controller
 const router = express.Router()
 
 //GET produto
-router.get('/produto', controller.getProduto)
+router.get('/produto/:codigo', controller.getProduto)
 
 //PUT(edita) Saldo Produto
 //router.put('/produto', controller.putSaldoProduto)

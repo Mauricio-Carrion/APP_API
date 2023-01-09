@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
-import Config from '../config/Config'
+import Config from '../config/config'
+import Model from '../models/Model';
 
 const config = new Config
+const model = new Model
 export default class Controller {
 
   async getProduto(req: Request, res: Response) {
@@ -11,20 +13,34 @@ export default class Controller {
       let produtoResposta
 
       if (config.db === "MySQL") {
-        // await produtoResposta = await Model.getProdutoFirebirdQuery(codigo)
-        produtoResposta = 'Mysql'
 
-        return res.status(200).send(produtoResposta)
+        produtoResposta = await model.getProdutoMysqlQuery(codigo)
+
+        if (produtoResposta) {
+
+          return res.status(200).send(produtoResposta)
+
+        } else {
+
+          return res.status(404).send({ msg: "Produto não encontrado!" })
+
+        }
       }
 
       if (config.db === "Firebird") {
-        // await produtoResposta = await Model.getProdutoMysqlQuery(codigo)
 
-        produtoResposta = 'Firebird'
+        produtoResposta = await model.getProdutoFirebirdQuery(codigo)
 
-        return res.status(200).send(produtoResposta)
+        if (produtoResposta) {
+
+          return res.status(200).send(produtoResposta)
+
+        } else {
+
+          return res.status(404).send({ msg: "Produto não encontrado!" })
+
+        }
       }
-
 
     } catch (error) {
 
@@ -33,7 +49,7 @@ export default class Controller {
     }
   }
 
-  async putSaldoProduto(codigo: number, saldo: number) {
+  async putSaldoProduto(codigo: string, saldo: string) {
 
   }
 }

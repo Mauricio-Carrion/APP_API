@@ -12,8 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Config_1 = __importDefault(require("../config/Config"));
-const config = new Config_1.default;
+const config_1 = __importDefault(require("../config/config"));
+const Model_1 = __importDefault(require("../models/Model"));
+const config = new config_1.default;
+const model = new Model_1.default;
 class Controller {
     getProduto(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -21,14 +23,22 @@ class Controller {
             try {
                 let produtoResposta;
                 if (config.db === "MySQL") {
-                    // await produtoResposta = await Model.getProdutoFirebirdModel(codigo)
-                    produtoResposta = 'Mysql';
-                    return res.status(200).send(produtoResposta);
+                    produtoResposta = yield model.getProdutoMysqlQuery(codigo);
+                    if (produtoResposta) {
+                        return res.status(200).send(produtoResposta);
+                    }
+                    else {
+                        return res.status(404).send({ msg: "Produto não encontrado!" });
+                    }
                 }
                 if (config.db === "Firebird") {
-                    // await produtoResposta = await Model.getProdutoMysqlModel(codigo)
-                    produtoResposta = 'Firebird';
-                    return res.status(200).send(produtoResposta);
+                    produtoResposta = yield model.getProdutoFirebirdQuery(codigo);
+                    if (produtoResposta) {
+                        return res.status(200).send(produtoResposta);
+                    }
+                    else {
+                        return res.status(404).send({ msg: "Produto não encontrado!" });
+                    }
                 }
             }
             catch (error) {

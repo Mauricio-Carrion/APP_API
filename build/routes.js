@@ -8,7 +8,7 @@ const Controller_1 = __importDefault(require("./controllers/Controller"));
 const controller = new Controller_1.default;
 const router = express_1.default.Router();
 //GET produto
-router.get('/produto', controller.getProduto);
+router.get('/produto/:codigo', controller.getProduto);
 //PUT(edita) Saldo Produto
 //router.put('/produto', controller.putSaldoProduto)
 exports.default = router;
