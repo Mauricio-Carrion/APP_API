@@ -12,9 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __importDefault(require("../config/config"));
+const Config_1 = __importDefault(require("../config/Config"));
 const Model_1 = __importDefault(require("../models/Model"));
-const config = new config_1.default;
+const config = new Config_1.default;
 const model = new Model_1.default;
 class Controller {
     getProduto(req, res) {

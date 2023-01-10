@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Config from '../config/config'
+import Config from '../config/Config'
 import Model from '../models/Model';
 
 const config = new Config

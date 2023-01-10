@@ -11,7 +11,7 @@ export default class Config {
 
   constructor() {
     this.configJson = configData
-    this.firebirdDefaultPath = 'C://JF System//Estoque//Dados//JFC.FDB'
+    this.firebirdDefaultPath = 'C:\\JF System\\Estoque\\Dados\\JFC.FDB'
     this.database = this.configJson.database
     this.databaseName = this.configJson.databaseName
     this.firebirdPath = this.configJson.firebirdPath ? this.configJson.firebirdPath : this.firebirdDefaultPath
