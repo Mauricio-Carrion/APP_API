@@ -10,7 +10,7 @@ export default class Controller {
     let codigo = req.params.codigo
 
     try {
-      let produtoResposta
+      let produtoResposta: any
 
       if (!config.db) {
         return res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' })
@@ -58,5 +58,50 @@ export default class Controller {
   async putSaldoProduto(req: Request, res: Response) {
     let codigo = req.body.codigo
     let saldo = req.body.saldo
+
+    try {
+      let produtoSaldo: any
+
+      if (!config.db) {
+        return res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' })
+      }
+
+      if (config.db === "MySQL" && config.dbName) {
+
+        produtoSaldo = await model.putSaldoProdutoMysqlQuery(codigo, saldo)
+
+        if (produtoSaldo) {
+
+          return res.status(200).send(produtoSaldo)
+
+        } else {
+
+          return res.status(404).send({ msg: "Produto não encontrado!" })
+
+        }
+      }
+
+      if (config.db === "Firebird") {
+
+        produtoSaldo = await model.putSaldoProdutoMysqlQuery(codigo, saldo)
+
+        if (produtoSaldo) {
+
+          return res.status(200).send(produtoSaldo)
+
+        } else {
+
+          return res.status(404).send({ msg: "Produto não encontrado!" })
+
+        }
+      }
+
+      return res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' })
+
+    } catch (error) {
+
+      res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' })
+
+    }
   }
 }

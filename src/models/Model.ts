@@ -14,7 +14,6 @@ export default class Model {
     this.mySqlPoll
     this.firebirdPoll
     this.connectDb()
-    this.rodaScript()
   }
 
   private connectDb() {
@@ -40,18 +39,16 @@ export default class Model {
   }
 
   private rodaScript() {
-    exec(`${cwd()}\\config\\Script.bat`, (error, stdout, stderr) => {
+    exec(`${cwd()}\\build\\config\\Script.bat`, (error) => {
       if (error) {
         console.error(error)
       }
-
-      console.log(stdout);
     })
   }
 
   getProdutoMysqlQuery(codigo: string) {
     return new Promise((resolve, reject) => {
-      this.mySqlPoll.query(`SELECT jfc037.codprod, jfc037.nomprod, jfc037.saldatua, jfc036.UNUNIT FROM jfc037 JOIN jfc036 ON jfc037.codprod = jfc036.codprod AND jfc037.codprod = '${codigo}'`, (error: any, results: any) => {
+      this.mySqlPoll.query(`SELECT jfc037.codprod, jfc037.nomprod, jfc037.saldatua, jfc036.UNUNIT FROM jfc037 JOIN jfc036 ON jfc037.codprod = jfc036.codprod AND jfc037.codprod = '${codigo}';`, (error: any, results: any) => {
         if (error) { reject(error) };
 
         if (results) {
@@ -66,9 +63,10 @@ export default class Model {
       this.firebirdPoll.get((err: any, db: any) => {
         if (err) { reject(err); throw err };
 
-        db.query(`SELECT jfc037.codprod, jfc037.nomprod, jfc037.saldatua, jfc036.UNUNIT FROM jfc037 JOIN jfc036 ON jfc037.codprod = jfc036.codprod AND jfc037.codprod = '${codigo}'`, (err: any, result: any) => {
+        db.query(`SELECT jfc037.codprod, jfc037.nomprod, jfc037.saldatua, jfc036.UNUNIT FROM jfc037 JOIN jfc036 ON jfc037.codprod = jfc036.codprod AND jfc037.codprod = '${codigo}';`, (err: any, result: any) => {
 
           if (err) {
+            this.rodaScript()
             reject(err)
           }
 
@@ -79,6 +77,40 @@ export default class Model {
           db.detach();
         });
       });
+    })
+  }
+
+  putSaldoProdutoFirebirdQuery(codigo: string, saldo: string) {
+    return new Promise((resolve, reject) => {
+      this.firebirdPoll.get((err: any, db: any) => {
+        if (err) { reject(err); throw err };
+
+        db.query(`UPDATE jfc037 SET saldatua = '${saldo}' WHERE codprod = '${codigo}';`, (err: any, result: any) => {
+
+          if (err) {
+            this.rodaScript()
+            reject(err)
+          }
+
+          if (result) {
+            resolve(result[0])
+          }
+
+          db.detach();
+        });
+      });
+    })
+  }
+
+  putSaldoProdutoMysqlQuery(codigo: string, saldo: string) {
+    return new Promise((resolve, reject) => {
+      this.mySqlPoll.query(`UPDATE jfc037 SET saldatua = '${saldo}' WHERE codprod = '${codigo}';`, (error: any, results: any) => {
+        if (error) { reject(error) };
+
+        if (results) {
+          resolve(results[0])
+        }
+      })
     })
   }
 
