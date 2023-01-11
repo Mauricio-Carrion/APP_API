@@ -12,7 +12,11 @@ export default class Controller {
     try {
       let produtoResposta
 
-      if (config.db === "MySQL") {
+      if (!config.db) {
+        return res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' })
+      }
+
+      if (config.db === "MySQL" && config.dbName) {
 
         produtoResposta = await model.getProdutoMysqlQuery(codigo)
 
@@ -42,6 +46,8 @@ export default class Controller {
         }
       }
 
+      return res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' })
+
     } catch (error) {
 
       res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' })
@@ -49,7 +55,8 @@ export default class Controller {
     }
   }
 
-  async putSaldoProduto(codigo: string, saldo: string) {
-
+  async putSaldoProduto(req: Request, res: Response) {
+    let codigo = req.body.codigo
+    let saldo = req.body.saldo
   }
 }

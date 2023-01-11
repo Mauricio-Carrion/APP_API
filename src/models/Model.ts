@@ -1,3 +1,5 @@
+import { exec } from 'child_process'
+import { cwd } from 'process'
 import mysql from 'mysql'
 import firebird from 'node-firebird'
 import Config from '../config/Config'
@@ -12,6 +14,7 @@ export default class Model {
     this.mySqlPoll
     this.firebirdPoll
     this.connectDb()
+    this.rodaScript()
   }
 
   private connectDb() {
@@ -36,10 +39,20 @@ export default class Model {
     }
   }
 
+  private rodaScript() {
+    exec(`${cwd()}\\config\\Script.bat`, (error, stdout, stderr) => {
+      if (error) {
+        console.error(error)
+      }
+
+      console.log(stdout);
+    })
+  }
+
   getProdutoMysqlQuery(codigo: string) {
     return new Promise((resolve, reject) => {
       this.mySqlPoll.query(`SELECT jfc037.codprod, jfc037.nomprod, jfc037.saldatua, jfc036.UNUNIT FROM jfc037 JOIN jfc036 ON jfc037.codprod = jfc036.codprod AND jfc037.codprod = '${codigo}'`, (error: any, results: any) => {
-        if (error) { reject(error); throw error };
+        if (error) { reject(error) };
 
         if (results) {
           resolve(results[0])
@@ -55,7 +68,9 @@ export default class Model {
 
         db.query(`SELECT jfc037.codprod, jfc037.nomprod, jfc037.saldatua, jfc036.UNUNIT FROM jfc037 JOIN jfc036 ON jfc037.codprod = jfc036.codprod AND jfc037.codprod = '${codigo}'`, (err: any, result: any) => {
 
-          if (err) { reject(err); throw err };
+          if (err) {
+            reject(err)
+          }
 
           if (result) {
             resolve(result[0])

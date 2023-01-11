@@ -22,7 +22,10 @@ class Controller {
             let codigo = req.params.codigo;
             try {
                 let produtoResposta;
-                if (config.db === "MySQL") {
+                if (!config.db) {
+                    return res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' });
+                }
+                if (config.db === "MySQL" && config.dbName) {
                     produtoResposta = yield model.getProdutoMysqlQuery(codigo);
                     if (produtoResposta) {
                         return res.status(200).send(produtoResposta);
@@ -40,14 +43,17 @@ class Controller {
                         return res.status(404).send({ msg: "Produto não encontrado!" });
                     }
                 }
+                return res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' });
             }
             catch (error) {
                 res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' });
             }
         });
     }
-    putSaldoProduto(codigo, saldo) {
+    putSaldoProduto(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            let codigo = req.body.codigo;
+            let saldo = req.body.saldo;
         });
     }
 }
