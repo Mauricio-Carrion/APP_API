@@ -46,6 +46,32 @@ export default class Model {
     })
   }
 
+  existeProdutoMysqlQuery(codigo: string) {
+    return new Promise((resolve, reject) => {
+      this.mySqlPoll.query(`SELECT jfc037.codprod FROM jfc037;`, (error: any, results: any) => {
+        if (error) { reject(error) };
+
+        if (results) {
+          resolve(true)
+        } else {
+          reject(false)
+        }
+      })
+    })
+  }
+
+  existeProdutoFirebirdQuery(codigo: string) {
+    return new Promise((resolve, reject) => {
+      this.mySqlPoll.query(`SELECT jfc037.codprod, jfc037.nomprod, jfc037.saldatua, jfc036.UNUNIT FROM jfc037 JOIN jfc036 ON jfc037.codprod = jfc036.codprod AND jfc037.codprod = '${codigo}';`, (error: any, results: any) => {
+        if (error) { reject(error) };
+
+        if (results) {
+          resolve(results[0])
+        }
+      })
+    })
+  }
+
   getProdutoMysqlQuery(codigo: string) {
     return new Promise((resolve, reject) => {
       this.mySqlPoll.query(`SELECT jfc037.codprod, jfc037.nomprod, jfc037.saldatua, jfc036.UNUNIT FROM jfc037 JOIN jfc036 ON jfc037.codprod = jfc036.codprod AND jfc037.codprod = '${codigo}';`, (error: any, results: any) => {

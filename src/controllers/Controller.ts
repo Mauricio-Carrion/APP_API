@@ -6,6 +6,29 @@ const config = new Config
 const model = new Model
 export default class Controller {
 
+  private async existeProduto(codigo: string): Promise<any> {
+
+    let existe
+
+    try {
+
+      if (config.db === "MySQL" && config.dbName) {
+        existe = await model.existeProdutoMysqlQuery(codigo)
+      }
+
+      if (config.db === "Firebird") {
+        existe = await model.existeProdutoFirebirdQuery(codigo)
+      }
+
+      existe ? true : false
+
+    } catch (error) {
+
+      console.log(error)
+
+    }
+  }
+
   async getProduto(req: Request, res: Response) {
     let codigo = req.params.codigo
 
@@ -35,15 +58,7 @@ export default class Controller {
 
         produtoResposta = await model.getProdutoFirebirdQuery(codigo)
 
-        if (produtoResposta) {
-
-          return res.status(200).send(produtoResposta)
-
-        } else {
-
-          return res.status(404).send({ msg: "Produto não encontrado!" })
-
-        }
+        return res.status(200).send(produtoResposta)
       }
 
       return res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' })
@@ -59,44 +74,39 @@ export default class Controller {
     let codigo = req.body.codigo
     let saldo = req.body.saldo
 
+    if (!codigo) {
+      return res.status(402).send({ msg: 'Código é obrigatório' })
+    }
+
+    if (!saldo) {
+      return res.status(402).send({ msg: 'Saldo é obrigatório' })
+    }
+
+    if (!config.db || !config.dbName) {
+      return res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' })
+    }
+
+    if (!(await this.existeProduto(codigo))) {
+      return res.status(502).send({ msg: 'Produto não encontrado!' })
+    }
+
     try {
       let produtoSaldo: any
 
-      if (!config.db) {
-        return res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' })
-      }
-
-      if (config.db === "MySQL" && config.dbName) {
+      if (config.db === "MySQL") {
 
         produtoSaldo = await model.putSaldoProdutoMysqlQuery(codigo, saldo)
 
-        if (produtoSaldo) {
-
-          return res.status(200).send(produtoSaldo)
-
-        } else {
-
-          return res.status(404).send({ msg: "Produto não encontrado!" })
-
-        }
+        return res.status(200).send(produtoSaldo)
       }
 
       if (config.db === "Firebird") {
 
         produtoSaldo = await model.putSaldoProdutoMysqlQuery(codigo, saldo)
 
-        if (produtoSaldo) {
+        return res.status(200).send(produtoSaldo)
 
-          return res.status(200).send(produtoSaldo)
-
-        } else {
-
-          return res.status(404).send({ msg: "Produto não encontrado!" })
-
-        }
       }
-
-      return res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' })
 
     } catch (error) {
 

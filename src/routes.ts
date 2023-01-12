@@ -9,6 +9,6 @@ const router = express.Router()
 router.get('/produto/:codigo', controller.getProduto)
 
 //PUT(edita) Saldo Produto
-//router.put('/produto', controller.putSaldoProduto)
+router.put('/produto', controller.putSaldoProduto)
 
 export default router
