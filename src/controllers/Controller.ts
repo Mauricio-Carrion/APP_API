@@ -6,29 +6,6 @@ const config = new Config
 const model = new Model
 export default class Controller {
 
-  private async existeProduto(codigo: string): Promise<any> {
-
-    let existe
-
-    try {
-
-      if (config.db === "MySQL" && config.dbName) {
-        existe = await model.existeProdutoMysqlQuery(codigo)
-      }
-
-      if (config.db === "Firebird") {
-        existe = await model.existeProdutoFirebirdQuery(codigo)
-      }
-
-      existe ? true : false
-
-    } catch (error) {
-
-      console.log(error)
-
-    }
-  }
-
   async getProduto(req: Request, res: Response) {
     let codigo = req.params.codigo
 
@@ -82,12 +59,8 @@ export default class Controller {
       return res.status(402).send({ msg: 'Saldo é obrigatório' })
     }
 
-    if (!config.db || !config.dbName) {
+    if (!config.db) {
       return res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' })
-    }
-
-    if (!(await this.existeProduto(codigo))) {
-      return res.status(502).send({ msg: 'Produto não encontrado!' })
     }
 
     try {
@@ -97,20 +70,20 @@ export default class Controller {
 
         produtoSaldo = await model.putSaldoProdutoMysqlQuery(codigo, saldo)
 
-        return res.status(200).send(produtoSaldo)
+        return res.status(200).send({ msg: 'Saldo alterado com sucesso!' })
       }
 
       if (config.db === "Firebird") {
 
-        produtoSaldo = await model.putSaldoProdutoMysqlQuery(codigo, saldo)
+        produtoSaldo = await model.putSaldoProdutoFirebirdQuery(codigo, saldo)
 
-        return res.status(200).send(produtoSaldo)
+        return res.status(200).send({ msg: 'Saldo alterado' })
 
       }
 
     } catch (error) {
 
-      res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' })
+      res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!teste' })
 
     }
   }

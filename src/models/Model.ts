@@ -46,32 +46,6 @@ export default class Model {
     })
   }
 
-  existeProdutoMysqlQuery(codigo: string) {
-    return new Promise((resolve, reject) => {
-      this.mySqlPoll.query(`SELECT jfc037.codprod FROM jfc037;`, (error: any, results: any) => {
-        if (error) { reject(error) };
-
-        if (results) {
-          resolve(true)
-        } else {
-          reject(false)
-        }
-      })
-    })
-  }
-
-  existeProdutoFirebirdQuery(codigo: string) {
-    return new Promise((resolve, reject) => {
-      this.mySqlPoll.query(`SELECT jfc037.codprod, jfc037.nomprod, jfc037.saldatua, jfc036.UNUNIT FROM jfc037 JOIN jfc036 ON jfc037.codprod = jfc036.codprod AND jfc037.codprod = '${codigo}';`, (error: any, results: any) => {
-        if (error) { reject(error) };
-
-        if (results) {
-          resolve(results[0])
-        }
-      })
-    })
-  }
-
   getProdutoMysqlQuery(codigo: string) {
     return new Promise((resolve, reject) => {
       this.mySqlPoll.query(`SELECT jfc037.codprod, jfc037.nomprod, jfc037.saldatua, jfc036.UNUNIT FROM jfc037 JOIN jfc036 ON jfc037.codprod = jfc036.codprod AND jfc037.codprod = '${codigo}';`, (error: any, results: any) => {
@@ -87,12 +61,15 @@ export default class Model {
   getProdutoFirebirdQuery(codigo: string) {
     return new Promise((resolve, reject) => {
       this.firebirdPoll.get((err: any, db: any) => {
-        if (err) { reject(err); throw err };
+        if (err) {
+          this.rodaScript()
+          reject(err);
+          throw err
+        };
 
         db.query(`SELECT jfc037.codprod, jfc037.nomprod, jfc037.saldatua, jfc036.UNUNIT FROM jfc037 JOIN jfc036 ON jfc037.codprod = jfc036.codprod AND jfc037.codprod = '${codigo}';`, (err: any, result: any) => {
 
           if (err) {
-            this.rodaScript()
             reject(err)
           }
 
@@ -114,13 +91,11 @@ export default class Model {
         db.query(`UPDATE jfc037 SET saldatua = '${saldo}' WHERE codprod = '${codigo}';`, (err: any, result: any) => {
 
           if (err) {
-            this.rodaScript()
             reject(err)
+            throw err
           }
 
-          if (result) {
-            resolve(result[0])
-          }
+          resolve(result)
 
           db.detach();
         });
