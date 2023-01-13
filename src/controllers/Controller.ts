@@ -48,15 +48,30 @@ export default class Controller {
   }
 
   async putSaldoProduto(req: Request, res: Response) {
+    let empresa = req.body.empresa
     let codigo = req.body.codigo
+    let produto = req.body.produto
     let saldo = req.body.saldo
+    let saldoAnterior = req.body.saldoAnterior
+
+    if (!empresa) {
+      return res.status(402).send({ msg: 'Empresa é obrigatório' })
+    }
 
     if (!codigo) {
       return res.status(402).send({ msg: 'Código é obrigatório' })
     }
 
+    if (!produto) {
+      return res.status(402).send({ msg: 'Produto é obrigatório' })
+    }
+
     if (!saldo) {
       return res.status(402).send({ msg: 'Saldo é obrigatório' })
+    }
+
+    if (!saldoAnterior) {
+      return res.status(402).send({ msg: 'Saldo anterior é obrigatório' })
     }
 
     if (!config.db) {
@@ -68,16 +83,16 @@ export default class Controller {
 
       if (config.db === "MySQL") {
 
-        produtoSaldo = await model.putSaldoProdutoMysqlQuery(codigo, saldo)
+        produtoSaldo = await model.putSaldoProdutoMysqlQuery(empresa, codigo, produto, saldo, saldoAnterior)
 
         return res.status(200).send({ msg: 'Saldo alterado com sucesso!' })
       }
 
       if (config.db === "Firebird") {
 
-        produtoSaldo = await model.putSaldoProdutoFirebirdQuery(codigo, saldo)
+        produtoSaldo = await model.putSaldoProdutoFirebirdQuery(empresa, codigo, produto, saldo, saldoAnterior)
 
-        return res.status(200).send({ msg: 'Saldo alterado' })
+        return res.status(200).send({ msg: 'Saldo alterado com sucesso!' })
 
       }
 

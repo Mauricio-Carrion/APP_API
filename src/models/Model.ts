@@ -22,7 +22,8 @@ export default class Model {
         host: config.dbhost,
         user: 'jf.mysql',
         password: '#@jj2802',
-        database: `${config.dbName}.jfc`
+        database: `${config.dbName}.jfc`,
+        multipleStatements: true
       });
     }
 
@@ -83,35 +84,49 @@ export default class Model {
     })
   }
 
-  putSaldoProdutoFirebirdQuery(codigo: string, saldo: string) {
+  putSaldoProdutoFirebirdQuery(empresa: string, codigo: string, produto: string, saldo: string, saldoAnterior: string) {
     return new Promise((resolve, reject) => {
       this.firebirdPoll.get((err: any, db: any) => {
         if (err) { reject(err); throw err };
 
-        db.query(`UPDATE jfc037 SET saldatua = '${saldo}' WHERE codprod = '${codigo}';`, (err: any, result: any) => {
+        db.query(`execute block as 
+        begin 
+        UPDATE jfc037 
+        SET saldatua = '${saldo}', dtalt = CURRENT_DATE 
+        WHERE codprod = '${codigo}';
+        INSERT INTO JFC049 (TELA, DTEXCL, HREXCL, USUARIO, OBS) 
+        VALUES ('Produtos Saldo', CURRENT_DATE, CURRENT_TIME, 'ScanJF', 'Empresa: ${empresa} - Código: ${codigo} Produto: ${produto} - Saldo anterior: ${saldoAnterior} Saldo atual: ${saldo}'); 
+        end`,
+          (err: any, result: any) => {
 
-          if (err) {
-            reject(err)
-            throw err
-          }
+            if (err) {
+              reject(err)
+              throw err
+            }
 
-          resolve(result)
+            resolve(result)
 
-          db.detach();
-        });
+            db.detach();
+          });
       });
     })
   }
 
-  putSaldoProdutoMysqlQuery(codigo: string, saldo: string) {
+  putSaldoProdutoMysqlQuery(empresa: string, codigo: string, produto: string, saldo: string, saldoAnterior: string) {
     return new Promise((resolve, reject) => {
-      this.mySqlPoll.query(`UPDATE jfc037 SET saldatua = '${saldo}' WHERE codprod = '${codigo}';`, (error: any, results: any) => {
-        if (error) { reject(error) };
+      this.mySqlPoll.query(`
+      UPDATE jfc037 
+      SET saldatua = '${saldo}', dtalt = CURRENT_DATE 
+      WHERE codprod = '${codigo}';
+      INSERT INTO JFC049 (TELA, DTEXCL, HREXCL, USUARIO, OBS) 
+      VALUES ('Produtos Saldo', CURRENT_DATE, CURRENT_TIME, 'ScanJF', 'Empresa: ${empresa} - Código: ${codigo} Produto: ${produto} - Saldo anterior: ${saldoAnterior} Saldo atual: ${saldo}');`,
+        (error: any, results: any) => {
+          if (error) { reject(error) };
 
-        if (results) {
-          resolve(results[0])
-        }
-      })
+          if (results) {
+            resolve(results[0])
+          }
+        })
     })
   }
 
