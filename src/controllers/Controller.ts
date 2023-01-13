@@ -90,6 +90,8 @@ export default class Controller {
 
       if (config.db === "Firebird") {
 
+        console.log(typeof saldo);
+
         produtoSaldo = await model.putSaldoProdutoFirebirdQuery(empresa, codigo, produto, saldo, saldoAnterior)
 
         return res.status(200).send({ msg: 'Saldo alterado com sucesso!' })
@@ -98,7 +100,7 @@ export default class Controller {
 
     } catch (error) {
 
-      res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!teste' })
+      res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' })
 
     }
   }

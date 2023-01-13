@@ -49,7 +49,7 @@ export default class Model {
 
   getProdutoMysqlQuery(codigo: string) {
     return new Promise((resolve, reject) => {
-      this.mySqlPoll.query(`SELECT jfc037.codprod, jfc037.nomprod, jfc037.saldatua, jfc036.UNUNIT FROM jfc037 JOIN jfc036 ON jfc037.codprod = jfc036.codprod AND jfc037.codprod = '${codigo}';`, (error: any, results: any) => {
+      this.mySqlPoll.query(`SELECT jfc037.codempr, jfc037.codprod, jfc037.nomprod, jfc037.saldatua, jfc036.UNUNIT FROM jfc037 JOIN jfc036 ON jfc037.codprod = jfc036.codprod AND jfc037.codprod = '${codigo}';`, (error: any, results: any) => {
         if (error) { reject(error) };
 
         if (results) {
@@ -68,7 +68,7 @@ export default class Model {
           throw err
         };
 
-        db.query(`SELECT jfc037.codprod, jfc037.nomprod, jfc037.saldatua, jfc036.UNUNIT FROM jfc037 JOIN jfc036 ON jfc037.codprod = jfc036.codprod AND jfc037.codprod = '${codigo}';`, (err: any, result: any) => {
+        db.query(`SELECT jfc037.codempr, jfc037.codprod, jfc037.nomprod, jfc037.saldatua, jfc036.UNUNIT FROM jfc037 JOIN jfc036 ON jfc037.codprod = jfc036.codprod AND jfc037.codprod = '${codigo}';`, (err: any, result: any) => {
 
           if (err) {
             reject(err)
@@ -92,7 +92,7 @@ export default class Model {
         db.query(`execute block as 
         begin 
         UPDATE jfc037 
-        SET saldatua = '${saldo}', dtalt = CURRENT_DATE 
+        SET saldatua = ${parseFloat(saldo)}, dtalt = CURRENT_DATE 
         WHERE codprod = '${codigo}';
         INSERT INTO JFC049 (TELA, DTEXCL, HREXCL, USUARIO, OBS) 
         VALUES ('Produtos Saldo', CURRENT_DATE, CURRENT_TIME, 'ScanJF', 'Empresa: ${empresa} - Código: ${codigo} Produto: ${produto} - Saldo anterior: ${saldoAnterior} Saldo atual: ${saldo}'); 
