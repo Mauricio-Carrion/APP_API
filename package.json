@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "ig": "npm install -g pm2@5.2.2",
     "stopScanjf": "pm2 stop server",
     "startScanjf": "pm2 start server",
     "build": "npx tsc",
@@ -36,7 +37,7 @@
     "figlet": "1.5.2",
     "inquirer": "8.0.0",
     "mysql": "2.18.1",
-    "node-firebird": "^1.1.4",
+    "node-firebird": "1.1.4",
     "ora": "5.4.1"
   }
 }

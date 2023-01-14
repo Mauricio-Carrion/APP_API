@@ -50,7 +50,9 @@ if (configData.database) {
   interface Str {
     database: string,
     databaseName: string,
-    databasePath: string
+    databasePath: string,
+    user: string
+    password: string
   }
 
   let str: Str
@@ -62,35 +64,55 @@ if (configData.database) {
         name: 'databaseType',
         message: 'Qual o banco de dados?',
         choices: [chalk.red.bold('Firebird'), (chalk.hex('#00758f').bold('My') + chalk.hex('#F29111').bold('SQL'))],
-      }
+      },
     )
     .then(answers => {
       str = {
         database: handleDbName(answers.databaseType)!,
         databaseName: '',
-        databasePath: ''
+        databasePath: '',
+        user: '',
+        password: ''
       }
 
       inquirer
         .prompt(
-          handleDbName(answers.databaseType) === 'Firebird' ?
+          [
+            handleDbName(answers.databaseType) === 'Firebird' ?
+              {
+                type: 'input',
+                name: 'databasePath',
+                message: 'Digite o caminho do banco de dados(pressione enter para o caminho padrão):',
+              }
+              :
+              {
+                type: 'input',
+                name: 'databaseName',
+                message: 'Digite o nome do banco de dados:'
+              },
+
             {
               type: 'input',
-              name: 'databasePath',
-              message: 'Digite o caminho do banco de dados',
-            }
-            :
+              name: 'user',
+              message: 'Digite o nome de usuario para acessar o app:',
+            },
+
             {
-              type: 'input',
-              name: 'databaseName',
-              message: 'Digite o nome do banco de dados'
+              type: 'password',
+              mask: '*',
+              name: 'password',
+              message: 'Digite uma senha para acessar o app:',
             }
+          ]
         ).then(answers => {
           answers.databaseName
             ?
             str.databaseName = answers.databaseName
             :
             str.databasePath = answers.databasePath
+
+          str.user = answers.user
+          str.password = answers.password
 
           const filename = `${__dirname}/config/config.json`;
 

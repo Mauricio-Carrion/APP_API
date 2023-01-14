@@ -1,5 +1,7 @@
 {
   "database": "",
   "databaseName": "",
-  "databasePath": ""
+  "databasePath": "",
+  "user": "",
+  "password": ""
 }
