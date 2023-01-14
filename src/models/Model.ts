@@ -85,7 +85,7 @@ export default class Model {
     })
   }
 
-  putSaldoProdutoFirebirdQuery(empresa: string, codigo: string, produto: string, saldo: number, saldoAnterior: number) {
+  putSaldoProdutoFirebirdQuery(empresa: string, codigo: string, produto: string, saldo: string, saldoAnterior: string) {
     return new Promise((resolve, reject) => {
       this.firebirdPoll.get((err: any, db: any) => {
         if (err) { reject(err); throw err };
@@ -93,10 +93,10 @@ export default class Model {
         db.query(`execute block as 
         begin 
         UPDATE jfc037 
-        SET saldatua = ${saldo.toFixed(3)}, dtalt = CURRENT_DATE 
+        SET saldatua = ${saldo}, dtalt = CURRENT_DATE 
         WHERE codprod = '${codigo}';
         INSERT INTO JFC049 (TELA, DTEXCL, HREXCL, USUARIO, OBS) 
-        VALUES ('Produtos Saldo', CURRENT_DATE, CURRENT_TIME, 'ScanJF', 'Empresa: ${empresa} - Código: ${codigo} Produto: ${produto} - Saldo anterior: ${saldoAnterior} Saldo atual: ${saldo}'); 
+        VALUES ('Produtos Saldo', CURRENT_DATE, CURRENT_TIME, 'ScanJF', 'Empresa: ${empresa} - Código: ${codigo} Produto: ${produto} - Saldo anterior: ${saldoAnterior} Saldo atual: ${saldo.replace('.', ',')}');
         end`,
           (err: any, result: any) => {
 
@@ -113,16 +113,16 @@ export default class Model {
     })
   }
 
-  putSaldoProdutoMysqlQuery(empresa: string, codigo: string, produto: string, saldo: number, saldoAnterior: number) {
+  putSaldoProdutoMysqlQuery(empresa: string, codigo: string, produto: string, saldo: string, saldoAnterior: string) {
     return new Promise((resolve, reject) => {
       this.mySqlPoll.query(`
-      UPDATE jfc037 
+      UPDATE JFC037
       SET saldatua = ${saldo}, dtalt = CURRENT_DATE 
-      WHERE codprod = '${codigo}';
-      INSERT INTO JFC049 (TELA, DTEXCL, HREXCL, USUARIO, OBS) 
-      VALUES ('Produtos Saldo', CURRENT_DATE, CURRENT_TIME, 'ScanJF', 'Empresa: ${empresa} - Código: ${codigo} Produto: ${produto} - Saldo anterior: ${saldoAnterior} Saldo atual: ${saldo}');`,
+      WHERE codprod = ${codigo};
+      INSERT INTO JFC049(TELA, DTEXCL, HREXCL, USUARIO, OBS)
+        VALUES('Produtos Saldo', CURRENT_DATE, CURRENT_TIME, 'ScanJF', 'Empresa: ${empresa} - Código: ${codigo} Produto: ${produto} - Saldo anterior: ${saldoAnterior} Saldo atual: ${saldo.replace('.', ',')}'); `,
         (error: any, results: any) => {
-          if (error) { reject(error) };
+          if (error) { throw error; };
 
           if (results) {
             resolve(results[0])
