@@ -1,4 +1,5 @@
 import configData from './config.json'
+
 export default class Config {
   private configJson: any
   private database: string
@@ -8,6 +9,8 @@ export default class Config {
   private host: string
   private mySqlPort: number
   private firebirdPort: number
+  private user: string
+  private password: string
 
   constructor() {
     this.configJson = configData
@@ -15,6 +18,8 @@ export default class Config {
     this.database = this.configJson.database
     this.databaseName = this.configJson.databaseName
     this.firebirdPath = this.configJson.firebirdPath ? this.configJson.firebirdPath : this.firebirdDefaultPath
+    this.user = this.configJson.user
+    this.password = this.configJson.password
     this.host = '127.0.0.1'
     this.mySqlPort = 3306
     this.firebirdPort = 3050
@@ -42,5 +47,13 @@ export default class Config {
 
   get fbPort() {
     return this.firebirdPort
+  }
+
+  get userName() {
+    return this.user
+  }
+
+  get userPassword() {
+    return this.password
   }
 }
