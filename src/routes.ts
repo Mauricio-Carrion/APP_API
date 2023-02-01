@@ -6,6 +6,9 @@ const controller = new Controller
 const middleware = new Middleware
 
 const router = express.Router()
+//POST usuario
+
+router.post('/usuario', controller.verificaUsuario)
 
 //GET produto
 router.get('/produto/:codigo', middleware.authentication, controller.getProduto)

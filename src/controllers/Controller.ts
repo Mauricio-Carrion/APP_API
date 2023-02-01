@@ -6,6 +6,14 @@ const config = new Config
 const model = new Model
 export default class Controller {
 
+  verificaUsuario(req: Request, res: Response) {
+    if (req.headers.usuario == config.userName && req.headers.senha == config.userPassword) {
+      res.status(200).send({ msg: 'Usuário e senha corretos' })
+    } else {
+      res.status(401).send({ msg: 'Usuário ou senha incorretos.' })
+    }
+  }
+
   async getProduto(req: Request, res: Response) {
     let codigo = req.params.codigo
 
