@@ -7,6 +7,8 @@ const model = new Model
 export default class Controller {
 
   verificaUsuario(req: Request, res: Response) {
+    console.log(req.headers, req.headers.senha);
+
     if (req.headers.usuario == config.userName && req.headers.senha == config.userPassword) {
       res.status(200).send({ msg: 'Usuário e senha corretos' })
     } else {
