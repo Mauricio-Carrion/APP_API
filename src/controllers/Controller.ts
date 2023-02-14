@@ -7,8 +7,6 @@ const model = new Model
 export default class Controller {
 
   verificaUsuario(req: Request, res: Response) {
-    console.log(req.headers, req.headers.senha);
-
     if (req.headers.usuario == config.userName && req.headers.senha == config.userPassword) {
       res.status(200).send({ msg: 'Usuário e senha corretos' })
     } else {
@@ -18,6 +16,9 @@ export default class Controller {
 
   async getProduto(req: Request, res: Response) {
     let codigo = req.params.codigo
+
+    console.log(req.params.codigo)
+    console.log(req.headers)
 
     try {
       let produtoResposta: any
