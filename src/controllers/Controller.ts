@@ -17,9 +17,6 @@ export default class Controller {
   async getProduto(req: Request, res: Response) {
     let codigo = req.params.codigo
 
-    console.log(req.params.codigo)
-    console.log(req.headers)
-
     try {
       let produtoResposta: any
 
@@ -109,7 +106,10 @@ export default class Controller {
 
     } catch (error) {
 
-      res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' })
+      console.error(error);
+
+
+      res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde! deu ruim' })
 
     }
   }
