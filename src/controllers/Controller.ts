@@ -43,7 +43,15 @@ export default class Controller {
 
         produtoResposta = await model.getProdutoFirebirdQuery(codigo)
 
-        return res.status(200).send(produtoResposta)
+        if (produtoResposta) {
+
+          return res.status(200).send(produtoResposta)
+
+        } else {
+
+          return res.status(404).send({ msg: "Produto não encontrado!" })
+
+        }
       }
 
       return res.status(502).send({ msg: 'Ocorreu um erro no servidor, tente mais tarde!' })
